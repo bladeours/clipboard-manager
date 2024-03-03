@@ -1,5 +1,8 @@
 use gtk::prelude::{BoxExt, ButtonExt, GtkWindowExt, OrientableExt};
 use relm4::{gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
+use relm4::actions::RelmActionGroup;
+use relm4::gtk::{ActivateAction, ApplicationWindow, CallbackAction, ShortcutTrigger};
+use relm4::gtk::ffi::gtk_shortcut_trigger_parse_string;
 
 struct AppModel {
     counter: u8,
@@ -23,6 +26,7 @@ impl SimpleComponent for AppModel {
             set_title: Some("Simple app"),
             set_default_width: 300,
             set_default_height: 100,
+            //add shortcut controller for shortcut ctrl + m
 
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
@@ -78,6 +82,15 @@ impl SimpleComponent for AppModel {
 }
 
 fn main() {
+    let trigger = gtk::ShortcutTrigger::parse_string("<Control>m");
+
+    let action = CallbackAction::new(|widget, _| {println!("essa")});
+    let shortcut = gtk::Shortcut::new(trigger, Some(action));
+    let shortcut_controller = gtk::ShortcutController::new();
+    shortcut_controller.add_shortcut(shortcut);
+
     let app = RelmApp::new("relm4.test.simple");
     app.run::<AppModel>(0);
+
 }
+
